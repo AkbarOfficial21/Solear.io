@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Pastel Photo Frame Editor</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+margin:0;
+background:linear-gradient(135deg,#e9d8ff,#f3e8ff,#ede9fe);
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+/* LAYOUT */
+
+.app{
+width:95%;
+max-width:1200px;
+display:flex;
+gap:20px;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:300px;
+background:white;
+border-radius:16px;
+padding:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.1);
+}
+
+.sidebar h2{
+margin-top:0;
+color:#7c3aed;
+}
+
+.control{
+margin-bottom:18px;
+}
+
+label{
+font-size:14px;
+font-weight:600;
+color:#6b21a8;
+}
+
+/* INPUT */
+
+input[type=file]{
+width:100%;
+padding:8px;
+border-radius:8px;
+border:1px solid #ddd;
+}
+
+.slider{
+width:100%;
+}
+
+/* BUTTON */
+
+button{
+width:100%;
+padding:12px;
+margin-top:8px;
+border:none;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+background:linear-gradient(135deg,#a78bfa,#c084fc);
+color:white;
+transition:.2s;
+}
+
+button:hover{
+transform:scale(1.04);
+box-shadow:0 8px 18px rgba(0,0,0,0.2);
+}
+
+/* TEMPLATE SCROLL BOX */
+
+.template-container{
+max-height:240px;
+overflow-y:auto;
+padding-right:5px;
+border-radius:10px;
+margin-top:10px;
+}
+
+/* SCROLLBAR */
+
+.template-container::-webkit-scrollbar{
+width:6px;
+}
+
+.template-container::-webkit-scrollbar-track{
+background:#f3e8ff;
+border-radius:10px;
+}
+
+.template-container::-webkit-scrollbar-thumb{
+background:linear-gradient(#a78bfa,#7c3aed);
+border-radius:10px;
+}
+
+/* TEMPLATE GRID */
+
+.templates{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+}
+
+.templates img{
+width:100%;
+border-radius:10px;
+cursor:pointer;
+transition:.25s;
+border:2px solid transparent;
+}
+
+.templates img:hover{
+transform:scale(1.05);
+border-color:#a78bfa;
+}
+
+/* EDITOR */
+
+.editor{
+flex:1;
+background:white;
+border-radius:16px;
+padding:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.1);
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+/* CANVAS BOX */
+
+.canvas-box{
+width:520px;
+height:520px;
+border-radius:14px;
+border:2px dashed #c4b5fd;
+position:relative;
+background:#faf5ff;
+overflow:hidden;
+}
+
+canvas{
+position:absolute;
+top:0;
+left:0;
+}
+
+/* DROP TEXT */
+
+.drop{
+position:absolute;
+width:100%;
+height:100%;
+display:flex;
+align-items:center;
+justify-content:center;
+color:#a78bfa;
+font-weight:bold;
+pointer-events:none;
+}
+
+/* PROGRESS */
+
+.progress{
+width:100%;
+height:6px;
+background:#eee;
+border-radius:10px;
+margin-top:6px;
+overflow:hidden;
+}
+
+.bar{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#a78bfa,#7c3aed);
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+.app{
+flex-direction:column;
+}
+
+.sidebar{
+width:100%;
+}
+
+.canvas-box{
+width:90vw;
+height:90vw;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<div class="sidebar">
+
+<h2>Photo Frame</h2>
+
+<div class="control">
+<input type="file" id="upload">
+<div class="progress"><div class="bar" id="bar"></div></div>
+</div>
+
+<div class="control">
+<label>Zoom</label>
+<input type="range" min="0.2" max="3" step="0.01" value="1" class="slider" id="zoom">
+</div>
+
+<div class="control">
+<label>Rotate</label>
+<input type="range" min="-180" max="180" value="0" class="slider" id="rotate">
+</div>
+
+<div class="control">
+<button id="reset">Reset</button>
+<button id="download">Download PNG</button>
+</div>
+
+<h3 style="color:#7c3aed">Template Frame</h3>
+
+<div class="template-container">
+
+<div class="templates">
+
+<img src="17973837.png">
+<img src="17973837.png">
+<img src="17973837.png">
+<img src="17973837.png">
+<img src="17973837.png">
+<img src="17973837.png">
+<img src="17973837.png">
+<img src="17973837.png">
+<img src="17973837.png">
+<img src="17973837.png">
+<img src="17973837.png">
+<img src="17973837.png">
+<img src="17973837.png">
+<img src="17973837.png">
+<img src="17973837.png">
+<img src="17973837.png">
+<img src="https://pngimg.com/uploads/frame/frame_PNG13.png">
+<img src="https://pngimg.com/uploads/frame/frame_PNG25.png">
+<img src="https://pngimg.com/uploads/frame/frame_PNG36.png">
+<img src="https://pngimg.com/uploads/frame/frame_PNG37.png">
+<img src="https://pngimg.com/uploads/frame/frame_PNG39.png">
+<img src="https://pngimg.com/uploads/frame/frame_PNG42.png">
+<img src="https://pngimg.com/uploads/frame/frame_PNG44.png">
+
+</div>
+
+</div>
+
+</div>
+
+<div class="editor">
+
+<div class="canvas-box" id="box">
+
+<canvas id="canvas"></canvas>
+
+<div class="drop">Drag Foto ke sini</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+/* CANVAS */
+
+const canvas=document.getElementById("canvas")
+const ctx=canvas.getContext("2d")
+
+canvas.width=520
+canvas.height=520
+
+/* ELEMENT */
+
+const upload=document.getElementById("upload")
+const zoom=document.getElementById("zoom")
+const rotate=document.getElementById("rotate")
+
+const resetBtn=document.getElementById("reset")
+const downloadBtn=document.getElementById("download")
+
+const box=document.getElementById("box")
+
+/* IMAGE DATA */
+
+let img=new Image()
+let frame=new Image()
+
+let posX=260
+let posY=260
+let scale=1
+let angle=0
+
+let dragging=false
+
+/* DRAW */
+
+function draw(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height)
+
+if(img.src){
+
+ctx.save()
+
+ctx.translate(posX,posY)
+ctx.rotate(angle*Math.PI/180)
+ctx.scale(scale,scale)
+
+ctx.drawImage(img,-img.width/2,-img.height/2)
+
+ctx.restore()
+
+}
+
+if(frame.src){
+
+ctx.drawImage(frame,0,0,canvas.width,canvas.height)
+
+}
+
+}
+
+/* UPLOAD */
+
+upload.addEventListener("change",e=>{
+
+const file=e.target.files[0]
+if(!file) return
+
+const reader=new FileReader()
+
+reader.onload=function(evt){
+
+img=new Image()
+
+img.onload=function(){
+
+posX=canvas.width/2
+posY=canvas.height/2
+scale=1
+angle=0
+
+draw()
+
+}
+
+img.src=evt.target.result
+
+}
+
+reader.readAsDataURL(file)
+
+})
+
+/* TEMPLATE SELECT */
+
+document.querySelectorAll(".templates img").forEach(el=>{
+
+el.onclick=()=>{
+
+frame=new Image()
+frame.src=el.src
+
+frame.onload=draw
+
+}
+
+})
+
+/* ZOOM */
+
+zoom.oninput=e=>{
+scale=parseFloat(e.target.value)
+draw()
+}
+
+/* ROTATE */
+
+rotate.oninput=e=>{
+angle=parseFloat(e.target.value)
+draw()
+}
+
+/* DRAG */
+
+canvas.addEventListener("mousedown",()=>dragging=true)
+
+window.addEventListener("mouseup",()=>dragging=false)
+
+canvas.addEventListener("mousemove",e=>{
+
+if(dragging){
+
+posX=e.offsetX
+posY=e.offsetY
+
+draw()
+
+}
+
+})
+
+/* DRAG DROP */
+
+box.addEventListener("dragover",e=>e.preventDefault())
+
+box.addEventListener("drop",e=>{
+
+e.preventDefault()
+
+const file=e.dataTransfer.files[0]
+if(!file) return
+
+const reader=new FileReader()
+
+reader.onload=function(evt){
+
+img=new Image()
+
+img.onload=function(){
+
+posX=canvas.width/2
+posY=canvas.height/2
+
+draw()
+
+}
+
+img.src=evt.target.result
+
+}
+
+reader.readAsDataURL(file)
+
+})
+
+/* RESET */
+
+resetBtn.onclick=()=>{
+
+scale=1
+angle=0
+posX=canvas.width/2
+posY=canvas.height/2
+
+zoom.value=1
+rotate.value=0
+
+draw()
+
+}
+
+/* DOWNLOAD */
+
+downloadBtn.onclick=()=>{
+
+draw()
+
+const link=document.createElement("a")
+
+link.download="photo-frame.png"
+link.href=canvas.toDataURL("image/png")
+
+link.click()
+
+}
+
+</script>
+
+</body>
+</html>
